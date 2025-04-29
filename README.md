@@ -61,9 +61,13 @@ Request Body:
 }
 
 ▶️ reponse: 
+
 {
+
     "message": "User login successfully",
+
     "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJob24iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDU5NjA3MzksImV4cCI6MTc0NjA0NzEzOX0.Jm_BjekoCjnyKkVfifL_d12YCDWYJPKZ0mR6Y0nGj-w"
+    
 }
 
 ✅ /auth/register
@@ -83,9 +87,13 @@ POST http://localhost:8080/auth/register
 }
 
 ▶️ response:
+
 {
+
     "message": "User registered successfully",
+    
     "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwb3IiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NDU5NjA2MjgsImV4cCI6MTc0NjA0NzAyOH0.CNSEkQx7SH7ccC5ymmS0MtScjG-oBfmpYmK0kEOjvU4"
+    
 }
 
 ### 4.2 การทดสอบ Endpoint ที่มีการจำกัดสิทธิ์ (/user และ /admin)
