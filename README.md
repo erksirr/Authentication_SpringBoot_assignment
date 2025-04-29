@@ -16,14 +16,21 @@ cd auth-assignment
 
 ## 2. ตั้งค่าฐานข้อมูล MySQL
 สร้างฐานข้อมูลชื่อ auth_assignment ใน MySQL
+
 แก้ไขไฟล์ application.properties (อยู่ที่ src/main/resources/application.properties) ให้ตรงกับข้อมูลฐานข้อมูล
 
 spring.datasource.url=jdbc:mysql://localhost:3306/auth_assignment
+
 spring.datasource.username=user_auth
+
 spring.datasource.password=password_auth
+
 spring.jpa.hibernate.ddl-auto=update
+
 spring.jpa.show-sql=true
+
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
 jwt.secret=supersecretkeythatshouldbelongerthan32charactersforbettersecurity (JWT Secret ต้องมีความยาวอย่างน้อย 32 ตัวอักษร)
 
 
