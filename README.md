@@ -61,8 +61,8 @@ GET http://localhost:8080/user
 ▶️ responce: Welcome USER: {username}
 หาก เข้าถึง path GET http://localhost:8080/admin
 ▶️ responce: You do not have permission to access this resource.
-✅ /admin Endpoint
-GET http://localhost:8080/user
-▶️ responce: Welcome ADMIN: {username}
-หาก เข้าถึง path GET http://localhost:8080/admin
-▶️ responce: Welcome ADMIN: {username}
+✅ /admin Endpoint<br>
+GET http://localhost:8080/user<br>
+▶️ responce: Welcome ADMIN: {username}<br>
+หาก เข้าถึง path GET http://localhost:8080/admin<br>
+▶️ responce: Welcome ADMIN: {username}<br>
