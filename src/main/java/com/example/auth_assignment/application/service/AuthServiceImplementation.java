@@ -32,26 +32,30 @@ public class AuthServiceImplementation implements AuthServicePort {
                 .orElseThrow(() -> new LoginException("User not found"));
 
         if (!user.getPassword().equals(password)) {
-            throw new LoginException("Invalid username or password");
+            throw new LoginException("Invalid password");
         }
 
         return jwtTokenProvider.createToken(user.getUsername(), user.getRole());
     }
 
     @Override
-    public void register(String username, String password, String role) {
+    public String register(String username, String password, String role) {
         boolean userExists = userRepository.findByUsername(username).isPresent();
         if (userExists) {
             throw new RegisterException("Username already exists");
         }
-
+    
         UserEntity userEntity = new UserEntity();
         userEntity.setUsername(username);
-        userEntity.setPassword(password); // ในการใช้งานจริงควรเข้ารหัส password เช่น BCrypt
+        userEntity.setPassword(password); // ควรเข้ารหัสในของจริง
         userEntity.setRole(role);
-
+    
         userRepository.save(userEntity);
+    
+        // สร้าง token และคืนค่า
+        return jwtTokenProvider.createToken(userEntity.getUsername(), userEntity.getRole());
     }
+    
 
     @Override
     public User getCurrentUser() {

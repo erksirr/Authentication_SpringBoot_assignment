@@ -6,6 +6,10 @@ import com.example.auth_assignment.domain.service.AuthServicePort;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,16 +21,23 @@ public class AuthController {
     private final AuthServicePort authServicePort;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid LoginRequest request) {
-        System.out.println("path /auth/login ทำงานแล้ว username = " + request.getUsername() + ", password = " + request.getPassword());
+    public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginRequest request) {
+
         String token = authServicePort.login(request.getUsername(), request.getPassword());
-        return ResponseEntity.ok(token);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User login successfully");
+        response.put("token", token);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody @Valid RegisterRequest request) {
-        System.out.println("path /auth/register ทำงาน แล้ว username = " + request.getUsername() + ", password = " + request.getPassword() + ", role = " + request.getRole());
-        authServicePort.register(request.getUsername(), request.getPassword(), request.getRole());
-        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+    public ResponseEntity<Map<String, String>> register(@RequestBody @Valid RegisterRequest request) {
+        String token = authServicePort.register(request.getUsername(), request.getPassword(), request.getRole());
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "User registered successfully");
+        response.put("token", token);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
