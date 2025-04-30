@@ -36,7 +36,7 @@ mvn spring-boot:run
 
 ## 4. ทดสอบ API<br>
 
-### 4.1 หลังจากแอปพลิเคชันทำงานแล้ว ทดสอบ API ผ่าน postman
+### 4.1 การทดสอบ Authentication (/login และ /register)
 
 เลือก Body -> raw
 
