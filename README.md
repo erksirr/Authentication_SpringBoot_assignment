@@ -25,12 +25,6 @@ spring.datasource.username=user_auth
 
 spring.datasource.password=password_auth
 
-spring.jpa.hibernate.ddl-auto=update
-
-spring.jpa.show-sql=true
-
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-
 jwt.secret=supersecretkeythatshouldbelongerthan32charactersforbettersecurity (JWT Secret ต้องมีความยาวอย่างน้อย 32 ตัวอักษร)
 
 
@@ -82,7 +76,7 @@ POST http://localhost:8080/auth/register
   
   "confirmPassword": "new_password",
   
-  "role": "USER"
+  "role": "USER" หรือ "role": "ADMIN" 
   
 }
 
