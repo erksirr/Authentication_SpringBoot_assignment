@@ -3,32 +3,24 @@ package com.example.auth_assignment.application.service;
 import com.example.auth_assignment.domain.exception.LoginException;
 import com.example.auth_assignment.domain.exception.RegisterException;
 import com.example.auth_assignment.domain.model.User;
-import com.example.auth_assignment.adapter.out.repository.JpaUserRepository; // import JpaUserRepository
+import com.example.auth_assignment.domain.repository.UserRepositoryPort;
 import com.example.auth_assignment.domain.service.AuthServicePort;
-import com.example.auth_assignment.infrastructure.entity.UserEntity;
 import com.example.auth_assignment.infrastructure.security.JwtTokenProvider;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImplementation implements AuthServicePort {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final JpaUserRepository userRepository;
-
-    // ใช้ constructor injection เพื่อให้ Spring inject `JpaUserRepository`
-    public AuthServiceImplementation(JwtTokenProvider jwtTokenProvider, JpaUserRepository userRepository) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepository = userRepository;
-    }
+    private final UserRepositoryPort userRepository;
 
     @Override
     public String login(String username, String password) {
         User user = userRepository.findByUsername(username)
-                .map(userEntity -> new User(null, userEntity.getUsername(), userEntity.getPassword(),
-                        userEntity.getRole()))
                 .orElseThrow(() -> new LoginException("User not found"));
 
         if (!user.getPassword().equals(password)) {
@@ -44,18 +36,12 @@ public class AuthServiceImplementation implements AuthServicePort {
         if (userExists) {
             throw new RegisterException("Username already exists");
         }
-    
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(username);
-        userEntity.setPassword(password); // ควรเข้ารหัสในของจริง
-        userEntity.setRole(role);
-    
-        userRepository.save(userEntity);
-    
-        // สร้าง token และคืนค่า
-        return jwtTokenProvider.createToken(userEntity.getUsername(), userEntity.getRole());
+
+        User user = new User(null, username, password, role);
+        userRepository.save(user);
+
+        return jwtTokenProvider.createToken(user.getUsername(), user.getRole());
     }
-    
 
     @Override
     public User getCurrentUser() {
@@ -63,8 +49,6 @@ public class AuthServiceImplementation implements AuthServicePort {
         if (principal instanceof UserDetails userDetails) {
             String username = userDetails.getUsername();
             return userRepository.findByUsername(username)
-                    .map(userEntity -> new User(null, userEntity.getUsername(), userEntity.getPassword(),
-                            userEntity.getRole()))
                     .orElseThrow(() -> new RuntimeException("User not found"));
         }
         throw new RuntimeException("User not authenticated");
