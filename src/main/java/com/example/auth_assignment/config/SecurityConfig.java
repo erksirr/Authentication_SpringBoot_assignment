@@ -11,6 +11,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,26 +34,43 @@ public class SecurityConfig {
     // กำหนดการตั้งค่าความปลอดภัยต่างๆ
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // ไม่ใช้ session
-                .and()
-                .authorizeHttpRequests()
-                .requestMatchers("/auth/login", "/auth/register").permitAll() // ✅ เปลี่ยนตรงนี้
-                .requestMatchers("/login").permitAll() // ให้สิทธิ์เข้าถึง /login
-                .requestMatchers("/user").hasAnyAuthority("USER", "ADMIN") // ให้สิทธิ์เข้าถึง /user สำหรับ USER หรือ
-                                                                           // ADMIN
-                .requestMatchers("/admin").hasAuthority("ADMIN") // ให้สิทธิ์เข้าถึง /admin สำหรับ ADMIN เท่านั้น
-                .anyRequest().authenticated() // ต้องการ authentication สำหรับ request อื่นๆ
-                .and()
-                .exceptionHandling()
-                .accessDeniedHandler(customAccessDeniedHandler) //แสดงการจัดการ Access Denied
-                .and()
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // ใช้
-                                                                                                         // JwtAuthenticationFilter
-                                                                                                         // ก่อน
-                                                                                                         // UsernamePasswordAuthenticationFilter
+        http
+            .cors() // เปิด CORS
+            .and()
+            .csrf().disable()
+            .sessionManagement()
+            .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // ไม่ใช้ session
+            .and()
+            .authorizeHttpRequests()
+            .requestMatchers("/auth/login", "/auth/register").permitAll() // ให้สิทธิ์ /auth/login และ /auth/register
+            .requestMatchers("/user","/data/view","/data/create").hasAnyAuthority("USER", "ADMIN") // USER หรือ ADMIN
+            .requestMatchers("/admin","/data/edit/**","/data/delete/**").hasAuthority("ADMIN") // ADMIN เท่านั้น
+            .anyRequest().authenticated()
+            .and()
+            .exceptionHandling()
+            .accessDeniedHandler(customAccessDeniedHandler)
+            .and()
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    // กำหนด CORS Configuration Source
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        // อนุญาต origin ของ frontend (เปลี่ยนเป็น URL frontend ของคุณ)
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        // หรือถ้าจะให้อนุญาตทุก origin (ไม่แนะนำใน production)
+        // configuration.setAllowedOrigins(List.of("*"));
+
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }

@@ -22,11 +22,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody @Valid LoginRequest request) {
-
+        System.out.println("เข้า path /auth/login");
+    
         String token = authServicePort.login(request.getUsername(), request.getPassword());
         Map<String, String> response = new HashMap<>();
+
         response.put("message", "User login successfully");
         response.put("token", token);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

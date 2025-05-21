@@ -15,6 +15,9 @@ public class JwtTokenProvider {
     private String secret;
 
     public String createToken(String username, String role) {
+        System.out.println("เข้า createToken");
+        System.out.println("username: " + username);
+        System.out.println("role: " + role);
         Claims claims = Jwts.claims().setSubject(username);
         claims.put("role", role);
 
